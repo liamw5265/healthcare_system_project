@@ -1,6 +1,6 @@
 from app.database import Base
 
-from sqlalchemy import String, Integer, DATETIME
+from sqlalchemy import String, Integer, DATETIME, DATE
 from sqlalchemy.dialects.mysql import SMALLINT
 from sqlalchemy.orm import mapped_column, relationship
 
