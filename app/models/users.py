@@ -1,12 +1,8 @@
-from app.database import Base
+from app.models.model_base import Base
 
-from sqlalchemy import String, Boolean, DATETIME
+from sqlalchemy import String, Boolean, text, DATETIME
 from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import mapped_column, relationship
-
-from datetime import datetime
-from zoneinfo import ZoneInfo
-
 
 
 class User(Base):
@@ -21,8 +17,8 @@ class User(Base):
 
     username = mapped_column(
         String(100),
-        unique = True,
-        nullable = False
+        nullable = False,
+        unique = True
     )
 
     password_hash = mapped_column(
@@ -42,24 +38,45 @@ class User(Base):
 
     phone = mapped_column(
         String(20),
-        unique = True,
-        nullable = False
+        nullable = False,
+        unique = True
     )
 
     email = mapped_column(
         String(255),
-        unique = True,
-        nullable = False
+        nullable = False,
+        unique = True
     )
 
     active = mapped_column(
         Boolean,
         nullable = False,
-        default = True
+        default = True,
+        server_default = text('TRUE')
     )
 
     created_at = mapped_column(
         DATETIME,
         nullable = False,
-        default = datetime.now(ZoneInfo('US/Hawaii')).strftime('%Y-%m-%d %H:%M:%S')
+        server_default = text('CURRENT_TIMESTAMP')
+    )
+
+    user_roles = relationship(
+        'UserRole',
+        back_populates = 'users'
+    )
+
+    vitals = relationship(
+        'Vital',
+        back_populates = 'users'
+    )
+
+    lab_results = relationship(
+        'LabResult',
+        back_populates = 'users'
+    )
+
+    audit_logs = relationship(
+        'AuditLog',
+        back_populates = 'users'
     )
