@@ -1,16 +1,14 @@
-from app.database import Base
+from app.models.model_base import Base
 
-from sqlalchemy import String, Integer, DATETIME, DATE, TIME, TEXT
-from sqlalchemy.dialects.mysql import SMALLINT, BIGINT
+from sqlalchemy import ForeignKey, DATETIME, String, TEXT, text, func
+from sqlalchemy.dialects.mysql import BIGINT, INTEGER, SMALLINT
 from sqlalchemy.orm import mapped_column, relationship
 
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 class Encounter(Base):
     __tablename__ = 'encounters'
 
-    encoutner_id = mapped_column(
+    encounter_id = mapped_column(
         BIGINT(unsigned = True),
         autoincrement = True,
         nullable = False,
@@ -19,16 +17,19 @@ class Encounter(Base):
 
     appointment_id = mapped_column(
         BIGINT(unsigned = True),
+        ForeignKey('appointments.appointment_id'),
         nullable = False
     )
 
     patient_id = mapped_column(
-        Integer(unsigned = True),
+        INTEGER(unsigned = True),
+        ForeignKey('patients.patient_id'),
         nullable = False
     )
 
     provider_id = mapped_column(
-        SMALLINT(unsigned = False),
+        SMALLINT(unsigned = True),
+        ForeignKey('providers.provider_id'),
         nullable = False
     )
 
@@ -42,7 +43,7 @@ class Encounter(Base):
     )
 
     status = mapped_column(
-        DATETIME,
+        String(30),
         nullable = False
     )
 
@@ -57,27 +58,47 @@ class Encounter(Base):
     created_at = mapped_column(
         DATETIME,
         nullable = False,
-        default = datetime.now(ZoneInfo('US/Hawaii')).strftime('%Y-%m-%d %H:%M:%S')
+        server_default = text('CURRENT_TIMESTAMP')
     )
 
     updated_at = mapped_column(
         DATETIME,
         nullable = False,
-        default = datetime.now(ZoneInfo('US/Hawaii')).strftime('%Y-%m-%d %H:%M:%S'),
-        onupdate = datetime.now(ZoneInfo('US/Hawaii')).strftime('%Y-%m-%d %H:%M:%S')
+        server_default = text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        onupdate = func.current_timestamp()
     )
 
     appointments = relationship(
-        'encounters',
-        back_populates = 'appointments'
+        'Appointment',
+        back_populates = 'encounters'
     )
 
     patients = relationship(
-        'encounters',
-        back_populates = 'patients'
+        'Patient',
+        back_populates = 'encounters'
     )
 
     providers = relationship(
-        'encounters',
-        back_populates = 'providers'
+        'Provider',
+        back_populates = 'encounters'
+    )
+
+    vitals = relationship(
+        'Vital',
+        back_populates = 'encounters'
+    )
+
+    diagnosis_records = relationship(
+        'Diagnosis_Record',
+        back_populates = 'encounters'
+    )
+
+    orders = relationship(
+        'Order',
+        back_populates = 'encounters'
+    )
+
+    billing = relationship(
+        'Billing',
+        back_populates = 'encounters'
     )
