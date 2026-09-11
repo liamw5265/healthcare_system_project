@@ -4,7 +4,7 @@ USE healthcare_system_db;
 
 CREATE TABLE IF NOT EXISTS departments
 (
-    department_id TINYINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    department_id SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     department_name VARCHAR(100) NOT NULL,
     department_location VARCHAR(100) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users
     password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
+    phone VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS user_roles
     PRIMARY KEY (user_id, role_id),
 
     FOREIGN KEY (user_id)REFERENCES users(user_id),
-
     FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
 
@@ -47,7 +46,7 @@ CREATE TABLE IF NOT EXISTS emergency_contact_info
     emergency_contact_id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    date_of_birth DATE,
+    date_of_birth DATE NOT NULL,
     sex VARCHAR(20),
     phone VARCHAR(20) NOT NULL,
     email VARCHAR(255),
@@ -64,7 +63,7 @@ CREATE TABLE IF NOT EXISTS patients
     phone VARCHAR(20),
     email VARCHAR(255),
     home_address VARCHAR(255) NOT NULL,
-    emergency_contact_id INT UNSIGNED,
+    emergency_contact_id INT UNSIGNED NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -76,9 +75,9 @@ CREATE TABLE IF NOT EXISTS providers
     provider_id SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    department_id TINYINT UNSIGNED NOT NULL,
+    department_id SMALLINT UNSIGNED NOT NULL,
     specialty VARCHAR(100),
-    phone VARCHAR(20),
+    phone VARCHAR(20) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
 
@@ -90,13 +89,13 @@ CREATE TABLE IF NOT EXISTS appointments
     appointment_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     patient_id INT UNSIGNED NOT NULL,
     provider_id SMALLINT UNSIGNED NOT NULL,
-    department_id TINYINT UNSIGNED NOT NULL,
+    department_id SMALLINT UNSIGNED NOT NULL,
     appointment_date DATE NOT NULL,
     appointment_time TIME NOT NULL,
     appointment_type VARCHAR(100) NOT NULL,
     reason VARCHAR(500),
     status VARCHAR(30) NOT NULL,
-    check_in_time TIME,
+    check_in_time TIME NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -108,7 +107,7 @@ CREATE TABLE IF NOT EXISTS appointments
 CREATE TABLE IF NOT EXISTS encounters
 (
     encounter_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    appointment_id BIGINT UNSIGNED,
+    appointment_id BIGINT UNSIGNED NOT NULL,
     patient_id INT UNSIGNED NOT NULL,
     provider_id SMALLINT UNSIGNED NOT NULL,
     start_time DATETIME NOT NULL,
@@ -128,12 +127,13 @@ CREATE TABLE IF NOT EXISTS vitals
 (
     vital_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     encounter_id BIGINT UNSIGNED NOT NULL,
-    temperature DECIMAL(5,2),
-    heart_rate SMALLINT UNSIGNED,
-    blood_pressure_systolic SMALLINT UNSIGNED,
-    blood_pressure_diastolic SMALLINT UNSIGNED,
-    weight DECIMAL(6,2),
-    height DECIMAL(6,2),
+    temperature DECIMAL(5,2) NOT NULL,
+    heart_rate SMALLINT UNSIGNED NOT NULL,
+    blood_pressure_systolic SMALLINT UNSIGNED NOT NULL,
+    blood_pressure_diastolic SMALLINT UNSIGNED NOT NULL,
+    weight_lb DECIMAL(6,2) UNSIGNED NOT NULL,
+    height_ft SMALLINT UNSIGNED NOT NULL,
+    height_in DECIMAL(6,2) UNSIGNED NOT NULL,
     recorded_by BIGINT UNSIGNED NOT NULL,
     recorded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
