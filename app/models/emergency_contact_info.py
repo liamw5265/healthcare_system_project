@@ -1,6 +1,7 @@
-from app.database import Base
+from app.models.model_base import Base
 
-from sqlalchemy import String, Integer, DATE
+from sqlalchemy import String, DATE
+from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import mapped_column, relationship
 
 
@@ -8,7 +9,7 @@ class EmergencyContactInfo(Base):
     __tablename__ = 'emergency_contact_info'
 
     emergency_contact_id = mapped_column(
-        Integer(unsigned = True),
+        INTEGER(unsigned = True),
         autoincrement = True,
         nullable = False,
         primary_key = True
@@ -39,7 +40,7 @@ class EmergencyContactInfo(Base):
     )
 
     email = mapped_column(
-        String(225)
+        String(255)
     )
 
     home_address = mapped_column(
@@ -47,6 +48,6 @@ class EmergencyContactInfo(Base):
     )
 
     patients = relationship(
-        'emergency_contact_info',
-        back_populates = 'patients'
+        'Patient',
+        back_populates = 'emergency_contact_info'
     )
