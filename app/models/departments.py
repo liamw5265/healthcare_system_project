@@ -1,9 +1,8 @@
-from app.database import Base
+from app.models.model_base import Base
 
-from sqlalchemy import String, Boolean
+from sqlalchemy import String, Boolean, text
 from sqlalchemy.dialects.mysql import SMALLINT
 from sqlalchemy.orm import mapped_column, relationship
-
 
 
 class Department(Base):
@@ -11,8 +10,9 @@ class Department(Base):
 
     department_id = mapped_column(
         SMALLINT(unsigned = True),
-        primary_key = True,
-        autoincrement = True
+        autoincrement = True,
+        nullable = False,
+        primary_key = True
     )
 
     department_name = mapped_column(
@@ -23,14 +23,21 @@ class Department(Base):
     department_location = mapped_column(
         String(100),
         nullable = False
-    ) 
+    )
 
     active = mapped_column(
         Boolean,
-        nullable = False
+        nullable = False,
+        default = True,
+        server_default = text('TRUE')
     )
 
     providers = relationship(
         'Provider',
         back_populates = 'department'
+    )
+
+    appointments = relationship(
+        'Appointment',
+        back_populates = 'departments'
     )
